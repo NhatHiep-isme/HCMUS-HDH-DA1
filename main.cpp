@@ -10,7 +10,7 @@ const unsigned MAX_LINE_LENGTH = 100;
 const unsigned BUF_SIZE = 50;
 const unsigned REDIR_SIZE = 2;
 const unsigned PIPE_SIZE = 3;
-const unsigned MAX_HISTORY = 30;
+const unsigned MAX_HISTORY_SIZE = 30;
 const unsigned MAX_COMMAND_NAME = 30;
 
 void ParseCommand(char *cmdString, char *argv[], int *waitFlag)
@@ -32,3 +32,19 @@ void ParseCommand(char *cmdString, char *argv[], int *waitFlag)
   }
   else wait = 0;
 }
+
+void SaveHistory(char *historyList[], int &historyIndex, char* command)
+{
+  if(historyCount < MAX_HISTORY_SIZE)
+  {
+    strcpy(historyList[historyIndex++], command);
+  }
+  else
+  {
+    free(historyList[0]);
+    for(int i=1; i< MAX_HISTORY_SIZE ; i++)
+    {
+      historyList[i-1] = historyList[i]; 
+    }
+    strcpy(historyList[MAX_HISTORY_SIZE - 1], command);
+  }
