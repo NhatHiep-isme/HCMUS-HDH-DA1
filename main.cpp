@@ -13,7 +13,7 @@ const unsigned PIPE_SIZE = 3;
 const unsigned MAX_HISTORY = 30;
 const unsigned MAX_COMMAND_NAME = 30;
 
-void ParseCommand(char *cmdString, char *argv[])
+void ParseCommand(char *cmdString, char *argv[], int *waitFlag)
 {
   int index = 0;
   char delim = " ";
@@ -24,4 +24,11 @@ void ParseCommand(char *cmdString, char *argv[])
     tempStr = strtok(NULL, delim);
     index++;
   }
+  
+  args[index] = NULL;
+  if(args[args.end() - 1] != '&')
+  { 
+    wait = 1;
+  }
+  else wait = 0;
 }
