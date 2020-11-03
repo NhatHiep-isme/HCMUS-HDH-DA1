@@ -28,7 +28,7 @@ void ParseCommand(char *cmdString, char *argv[], int *waitFlag)
   args[index] = NULL;
   if(args[args.end() - 1] != '&')
   { 
-    wait = 1;
+    waitFlag = 1;
   }
   else wait = 0;
 }
