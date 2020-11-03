@@ -33,7 +33,7 @@ void ParseCommand(char *cmdString, char *argv[], int *waitFlag)
   else wait = 0;
 }
 
-void SaveHistory(char *historyList[], int &historyIndex, char* command)
+void SaveHistory(char *historyList[], int &historyIndex, char* command) //luu toan bo lich su command
 {
   if(historyCount < MAX_HISTORY_SIZE)
   {
