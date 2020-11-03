@@ -47,4 +47,5 @@ void SaveHistory(char *historyList[], int &historyIndex, char* command) //luu to
       historyList[i-1] = historyList[i]; 
     }
     strcpy(historyList[MAX_HISTORY_SIZE - 1], command);
-  }
+ }
+}
