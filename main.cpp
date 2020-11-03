@@ -13,19 +13,15 @@ const unsigned PIPE_SIZE = 3;
 const unsigned MAX_HISTORY = 30;
 const unsigned MAX_COMMAND_NAME = 30;
 
-void ParseCommand(char cmdString[], char *argv[])
+void ParseCommand(char *cmdString, char *argv[])
 {
-  for(int i=0; i< BUF_SIZE; i++)
-  {
-    argv[i] = NULL;
-  }
-  
   int index = 0;
-  char *tempStr = strtok(cmdstring, " ");
-  while(tempStr != NULL)
+  char delim = " ";
+  char *tempstr = strtok(cmdString, delim);
+  while(tempStr!= NULL)
   {
-    argv[index++] = tempStr;
-    tempStr = strtok(NULL, " ");
+    argv[index] = tempStr;
+    tempStr = strtok(NULL, delim);
+    index++;
   }
-  argv[index] = NULL;
 }
