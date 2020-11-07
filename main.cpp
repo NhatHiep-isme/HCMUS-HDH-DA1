@@ -94,7 +94,7 @@ void ChildProcess(char* argv[], char* redirArgv[]) {
 			// lay file description
 			fdOut = creat(redirArgv[1], S_IRWXU);
 			if (fdOut == -1) {
-				printf("Redirect output failed");
+				printf("Redirect output failed\n");
 				exit(EXIT_FAILURE);
 			}
 
@@ -103,7 +103,7 @@ void ChildProcess(char* argv[], char* redirArgv[]) {
 
 			// kiem tra loi(khi dong chuong trỉnh)
 			if (close(fdOut) == -1) {
-				printf("Closing output failed");
+				printf("Closing output failed\n");
 				exit(EXIT_FAILURE);
 			}
 		}
@@ -112,14 +112,14 @@ void ChildProcess(char* argv[], char* redirArgv[]) {
 		else if (strcmp(redirArgv[0], "<") == 0) {
 			fdIn = open(redirArgv[1], O_RDONLY);
 			if (fdIn == -1) {
-				printf("Redirect input failed");
+				printf("Redirect input failed\n");
 				exit(EXIT_FAILURE);
 			}
 
 			dup2(fdIn, STDIN_FILENO);
 
 			if (close(fdIn) == -1) {
-				printf("Closing input failed");
+				printf("Closing input failed\n");
 				exit(EXIT_FAILURE);
 			}
 		}
@@ -127,7 +127,7 @@ void ChildProcess(char* argv[], char* redirArgv[]) {
 
 	//Thuc thi lenh cua user nhap vao trong tien trinh con
 	if (execvp(argv[0], argv) == -1) {
-		printf("Fail to execute command");
+		printf("Fail to execute command\n");
 		exit(EXIT_FAILURE);
 	}
 }
@@ -213,7 +213,7 @@ void ExecWithPipe(char* childArgv1[], char* childArgv2[]) {
 		close(pipefd[1]);
 
 		execvp(childArgv1[0], childArgv1);
-		printf("Fail to execute first command");
+		printf("Fail to execute first command\n");
 		exit(EXIT_FAILURE);
 	}
 
@@ -226,7 +226,7 @@ void ExecWithPipe(char* childArgv1[], char* childArgv2[]) {
 		close(pipefd[0]);
 
 		execvp(childArgv2[0], childArgv2);
-		printf("Fail to execute second command");
+		printf("Fail to execute second command\n");
 		exit(EXIT_FAILURE);
 	}
 
@@ -257,7 +257,7 @@ int main() {
 
 		// Doc va tach, chuyen doi user command
 		while (fgets(cmdString, MAX_LINE_LENGTH, stdin) == NULL) {
-			printf("Cannot read user input!");
+			printf("Cannot read user input!\n");
 			fflush(stdin);
 		}
 
