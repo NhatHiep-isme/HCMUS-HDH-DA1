@@ -30,18 +30,19 @@ void ParseCommand(char *cmdString, char *argv[], int *waitFlag)
 	argv[index] = NULL;
 }
 
-void History_Save(char *cmdString, int& line, char *History_List[]) //luu History_List
+void History_Save(char cmdString, int line, char *History_List[]) //luu History_List
 {
 	if (cmdString[0] != '!') //kiem tra co phai cmd !
 	{
-		if (line < MAX_HISTORY) //kiem tra da het mang chua
+		if (*line < MAX_HISTORY) //kiem tra da het mang chua
 		{
-			strcpy(History_List[line], cmdString);
-			line++;
+			strcpy(History_List[*line], cmdString);
+			*line++;
 		}
 		else
 		{
-			for (int i = 0; i< MAX_HISTORY - 1; i++)
+			int i;
+			for (i = 0; i< MAX_HISTORY - 1; i++)
 			{
 				strcpy(History_List[i], History_List[i + 1]);
 			}
