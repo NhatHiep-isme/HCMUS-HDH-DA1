@@ -1,12 +1,12 @@
 // SimpleShell123.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
 
-#include <unistd.h>     // fork()
-#include <sys/wait.h>   // waitpid()
-#include <stdio.h>      // printf(), fgets()
-#include <string.h>     // strtok(), strcmp(), strdup()
-#include <stdlib.h>     // free()
-#include <fcntl.h>      // open(), creat(), close()
+#include <unistd.h>     // thu vien ham fork()
+#include <sys/wait.h>   // thu vien ham waitpid()
+#include <stdio.h>      // thu vien ham printf(), fgets()
+#include <string.h>     // thu vien ham strtok(), strcmp(), strdup()
+#include <stdlib.h>     // thu vien ham free()
+#include <fcntl.h>      // thu vien ham open(), creat(), close()
 
 using namespace std;
 const unsigned MAX_LINE_LENGTH = 100;
@@ -44,7 +44,7 @@ void ParseCmd(char cmdString[], char *argv[], int *waitFlag) {
 }
 
 void SaveHistoryList(char *historyList[], int &historyIndex, char* cmdString) {
-	// Neu history_count vu?t quá MAX_HISTORY_SIZE, hãy ghi dè l?nh cu?i cùng
+	// Neu history_count vuot qua MAX_HISTORY_SIZE, hay ghi de lenh cuoi cung
 
 	if (historyIndex < MAX_HISTORY_SIZE) {
 		strcpy(historyList[historyIndex++], cmdString);
@@ -91,17 +91,17 @@ void ChildProcess(char* argv[], char* redirArgv[]) {
 		// Redirect output
 		if (strcmp(redirArgv[0], ">") == 0) {
 
-			// Get file description
+			// lay file description
 			fdOut = creat(redirArgv[1], S_IRWXU);
 			if (fdOut == -1) {
 				printf("Redirect output failed");
 				exit(EXIT_FAILURE);
 			}
 
-			// Replace stdout with output file
+			// thay the stdout -> output
 			dup2(fdOut, STDOUT_FILENO);
 
-			// Check for error on close
+			// kiem tra loi(khi dong chuong trỉnh)
 			if (close(fdOut) == -1) {
 				printf("Closing output failed");
 				exit(EXIT_FAILURE);
@@ -125,7 +125,7 @@ void ChildProcess(char* argv[], char* redirArgv[]) {
 		}
 	}
 
-	// Execute user command in child process
+	//Thuc thi lenh cua user nhap vao trong tien trinh con
 	if (execvp(argv[0], argv) == -1) {
 		printf("Fail to execute command");
 		exit(EXIT_FAILURE);
@@ -138,13 +138,13 @@ void ParentProcess(pid_t childPid, int waitFlag) {
 	printf("Parent <%d> spawned a child <%d>.\n", getpid(), childPid);
 	switch (waitFlag) {
 
-		// Parent and child are running concurrently
+		// Hai tien trinh cha va con cung luc chay
 	case 0: {
 		waitpid(childPid, &status, 0);
 		break;
 	}
 
-			// Parent waits for child process with PID to be terminated
+		// Tien trinh cha doi tien trinh con ( with PID) cham dut
 	default: {
 		waitpid(childPid, &status, WUNTRACED);
 
@@ -156,6 +156,7 @@ void ParentProcess(pid_t childPid, int waitFlag) {
 	}
 }
 
+//ham xu li pipe
 bool ParsePipe(char* argv[], char *childArgv1[], char *childArgv2[]) {
 	int index = 0, splitIndex = 0;
 	bool containsPipe = false;
@@ -163,7 +164,7 @@ bool ParsePipe(char* argv[], char *childArgv1[], char *childArgv2[]) {
 
 	while (argv[index] != NULL) {
 
-		// Check if user_command contains pipe character |
+		// Kiem tra xem user command co bao gom ki tu pipe "|"
 		if (strcmp(argv[index], "|") == 0) {
 			splitIndex = index;
 			containsPipe = true;
@@ -175,13 +176,13 @@ bool ParsePipe(char* argv[], char *childArgv1[], char *childArgv2[]) {
 		return false;
 	}
 
-	// Copy arguments before split pipe position to child01_argv[]
+	//Copy cac tham so truoc khi tach pipe vao bien childArgv1[]
 	for (index = 0; index < splitIndex; index++) {
 		childArgv1[index] = strdup(argv[index]);
 	}
 	childArgv1[index++] = NULL;
 
-	// Copy arguments after split pipe position to child02_argv[]
+	// Copy cac tham so sau khi tach pipe vao bien childArgv2[]
 	while (argv[index] != NULL) {
 		childArgv2[index - splitIndex - 1] = strdup(argv[index]);
 		index++;
@@ -197,14 +198,13 @@ void ExecWithPipe(char* childArgv1[], char* childArgv2[]) {
 	int pipefd[2];
 
 	if (pipe(pipefd) == -1) {
-		/* Create a pipe with 1 input and 1 output file descriptor
-		Notation: Index = 0 ==> read pipe, Index = 1 ==> write pipe
-		*/
+		//Tao 1 pipe voi 1 input va 1 output (file descriptor)
+                //Index = 0 -> read pipe, Index = 1 -> write pipe
 		printf("pipe() failed");
 		exit(EXIT_FAILURE);
 	}
 
-	// Create 1st child   
+	// Tao tien trinh con thu nhat (child 1)  
 	if (fork() == 0) {
 
 		// Redirect STDOUT to output part of pipe 
@@ -217,7 +217,7 @@ void ExecWithPipe(char* childArgv1[], char* childArgv2[]) {
 		exit(EXIT_FAILURE);
 	}
 
-	// Create 2nd child
+	// Tao tien trinh con thu hai(child 2)
 	if (fork() == 0) {
 
 		// Redirect STDIN to input part of pipe
@@ -255,29 +255,29 @@ int main() {
 		printf("osh>");
 		fflush(stdout);
 
-		// Read and parse user input
+		// Doc va tach, chuyen doi user command
 		while (fgets(cmdString, MAX_LINE_LENGTH, stdin) == NULL) {
 			printf("Cannot read user input!");
 			fflush(stdin);
 		}
 
-		// Remove trailing endline character
+		// Bo di ki tu ket thuc chuoi
 		cmdString[strcspn(cmdString, "\n")] = '\0';
 
-		// Check if user entered "exit"
+		// Kiem tra xem user co nham command: "exit" khong?
 		if (strcmp(cmdString, "exit") == 0) {
 			running = false;
 			continue;
 		}
 
-		// Check if user entered "!!"
+		// Kiem tra xem user co nham command: "!!" ?
 		if (strcmp(cmdString, "!!") == 0) {
 			if (historyIndex == 0) {
 				fprintf(stderr, "No commands in history before\n");
 				continue;
 			}
 			strcpy(cmdString, historyList[historyIndex - 1]);
-			printf("osh>%s\n", cmdString);
+			printf("HiepNe>%s\n", cmdString);
 		}
 
 		SaveHistoryList(historyList, historyIndex, cmdString);
@@ -292,17 +292,17 @@ int main() {
 		// Fork child process
 		pid_t pid = fork();
 
-		// Fork return twice on success: 0 - child process, > 0 - parent process
+		// Fork tra ve 2 lan neu thanh cong: 0 - child process, > 0 - parent process
 		switch (pid) {
 		case -1:
 			printf("fork() failed!");
 			exit(EXIT_FAILURE);
 
-		case 0:     // In child process
+		case 0:     // trong tien trinh con
 			ChildProcess(argv, redirArgv);
 			exit(EXIT_SUCCESS);
 
-		default:    // In parent process
+		default:    // Trong tien trinh cha
 			ParentProcess(pid, waitFlag);
 		}
 
