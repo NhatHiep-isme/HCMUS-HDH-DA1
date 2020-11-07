@@ -51,9 +51,10 @@ void History_Save(char cmdString, int line, char *History_List[]) //luu History_
 	}
 }
 
-void History_Load(char *History_List[], int line) //in tung dong cua History_List
+void History_Load(char History_List[], int line) //in tung dong cua History_List
 {
-	for (int i = 0; i < line; i++)
+	int i;
+	for (i = 0; i < *line; i++)
 	{
 		printf("%d:    %s \n", i, History_List[i]);
 	}
